@@ -6,41 +6,47 @@
     <title>User Ajax Demo</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="{% static 'ajax_post_app/css/styles.css' %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     </head>
     <body>
         <div class="container">
             <h1>My Posts</h1>
-        </div>
-        <div class="note_container">
-            <div id="placeholder">
+            <div class="note_container">
+                <div id="placeholder">
+                    {% for post in posts %}
+                    <div id="placeholder2">
+                        <h3>{{ post.text }}</h3>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="addnote">
+                <h3>Add a note:</h3>
+                <form action='/create' method='post' class='ajax_form' id='add_post_ajax_form'>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <textarea class="form-control" rows="8" id="text" name="text"></textarea>
+                    </div>
+                    <input type='submit' class="btn btn-primary" id="submit_btn" value='Post It!' />
+                </form>
+
+                <script>
+                    $('#add_post_ajax_form').submit(function(e){
+                        e.preventDefault()
+                        console.log('Sending Ajax request to', $(this).attr('action'))
+                        console.log('Submitting the following data', $(this).serialize())
+                        $.ajax({
+                          url: $(this).attr('action'), /* Where should this go? */
+                          method: 'post', /* Which HTTP verb? */
+                          data: $(this).serialize(), /* Any data to send along? */
+                          success: function(serverResponse) { /* What code should we run when the server responds? */
+                            $('#placeholder').html(serverResponse)
+                            }
+                        })
+                    });
+                </script>
+
             </div>
         </div>
-        <div class="addnote">
-            <h4>Add a note:</h4>
-            <form action='/create' method='post' class='ajax_form' id='add_post_ajax_form'>
-                {% csrf_token %}
-                <div class="form-group">
-                    <textarea class="form-control" rows="5" id="text" name="text"></textarea>
-                </div>
-                <input type='submit' id="submit_btn" value='Post It!' />
-            </form>
-
-            <script>
-                $('#add_post_ajax_form').submit(function(e){
-                    e.preventDefault()
-                    console.log('Sending Ajax request to', $(this).attr('action'))
-                    console.log('Submitting the following data', $(this).serialize())
-                    $.ajax({
-                      url: $(this).attr('action'), /* Where should this go? */
-                      method: 'post', /* Which HTTP verb? */
-                      data: $(this).serialize(), /* Any data to send along? */
-                      success: function(serverResponse) { /* What code should we run when the server responds? */
-                        $('#placeholder').html(serverResponse)
-                        }
-                    })
-                });
-            </script>
-        </div>
-
     </body>
 </html>
