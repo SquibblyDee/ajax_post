@@ -6,6 +6,38 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     </head>
     <body>
-        <h1>we in here</h1>
+        <div class="container">
+            <h1>My Posts</h1>
+        </div>
+        <div id="placeholder" style='margin-top:35px; border:1px solid black; width:300px; height:300px; padding:10px;'>
+        Placeholder div for our Ajax responses    
+        </div>
+        <div class="addnote">
+            <h4>Add a note:</h4>
+            <form action='/create' method='post' class='ajax_form' id='add_post_ajax_form'>
+                {% csrf_token %}
+                <div class="form-group">
+                    <textarea class="form-control" rows="5" id="text" name="text"></textarea>
+                </div>
+                <input type='submit' id="submit_btn" value='Post It!' />
+            </form>
+
+            <script>
+                $('#add_post_ajax_form').submit(function(e){
+                    e.preventDefault()
+                    console.log('Sending Ajax request to', $(this).attr('action'))
+                    console.log('Submitting the following data', $(this).serialize())
+                    $.ajax({
+                      url: $(this).attr('action'), /* Where should this go? */
+                      method: 'post', /* Which HTTP verb? */
+                      data: $(this).serialize(), /* Any data to send along? */
+                      success: function(serverResponse) { /* What code should we run when the server responds? */
+                        $('#placeholder').html(serverResponse)
+                        }
+                    })
+                });
+            </script>
+        </div>
+
     </body>
 </html>
